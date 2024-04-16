@@ -1,0 +1,144 @@
+# Finetune VQ-Diffusion-F on coco dataset
+model:
+  target: image_synthesis.modeling.models.dalle.DALLE
+  params:
+    content_info: {key: quantized_image}
+    condition_info: {key: sketch}
+    image_size: [256, 256]
+    content_codec_config: 
+    # target: image_synthesis.modeling.codecs.image_codec.openai_dvae.OpenAIDiscreteVAE
+      # target: image_synthesis.modeling.codecs.image_codec.taming_gumbel_vqvae.TamingGumbelVQVAE
+      target: image_synthesis.modeling.codecs.image_codec.taming_gumbel_vqvae.DummyContentCodec
+      params:
+        trainable: False
+        token_shape: [32, 32]
+        config_path: 'OUTPUT/pretrained_model/taming_dvae/taming_f8_8192_openimages.yaml'
+        ckpt_path: 'OUTPUT/pretrained_model/taming_dvae/taming_f8_8192_openimages_last.pth'
+        num_tokens: 8192
+        quantize_number: 2887
+        mapping_path: './help_folder/statistics/taming_vqvae_2887.pt'
+        # return_logits: True
+    condition_codec_config:
+      target: image_synthesis.modeling.codecs.sketch_codec.codec.SketchCodec
+      params:
+       sketch_size: [224, 224]                             ###################
+       patch_size: [16, 16]
+    diffusion_config:      
+    # target: image_synthesis.modeling.transformers.gpt_like_transformer.GPTLikeTransformer
+      target: image_synthesis.modeling.transformers.diffusion_transformer.DiffusionTransformer
+      params:
+        diffusion_step: 50
+        alpha_init_type: 'alpha1'       # init_type = fix or cos or linear 
+        auxiliary_loss_weight: 5.0e-4
+        adaptive_auxiliary_loss: True
+        mask_weight: [1, 1]    # the loss weight on mask region and non-mask region
+        lpips_net: null  # null or alex or vgg
+        lpips_weight: 0.
+
+        transformer_config:
+          target: image_synthesis.modeling.transformers.transformer_utils.SketchInpaintingTransformer
+          params:
+            attn_type: 'self'
+            n_layer: 16
+            condition_seq_len: 197    ###### useless now, we're concatenating with input
+            content_seq_len: 1024  # 32 x 32
+            content_spatial_size: [32, 32]
+            n_embd: 1024 # the dim of embedding dims
+            n_head: 16 
+            attn_pdrop: 0.0
+            resid_pdrop: 0.0
+            block_activate: GELU2
+            timestep_type: 'adalayernorm'    # adainsnorm or adalayernorm and abs
+            mlp_hidden_times: 4
+        condition_emb_config:
+          target: image_synthesis.modeling.embeddings.sketch_embedding.ResNetEmbedding
+          params:
+            name: resnet50
+            normalize: true
+            embed_dim: 1024
+            use_avg: false
+            layers_to_keep: 6       # not used for ResNet
+            pretrained_model_path: none
+            trainable: true
+        content_emb_config:
+          target: image_synthesis.modeling.embeddings.dalle_mask_image_embedding.DalleMaskImageEmbedding
+          params:
+            num_embed: 2887
+            spatial_size: !!python/tuple [32, 32]
+            embed_dim: 1024
+            trainable: True
+            pos_emb_type: embedding
+
+solver:
+  base_lr: 4.0e-6
+  adjust_lr: none # not adjust lr according to total batch_size
+  max_epochs: 250
+  save_epochs: 2
+  validation_epochs: 5
+  sample_iterations: 5000  # epoch #30000      # how many iterations to perform sampling once ?
+  print_specific_things: True
+  accumulate_grad_iters: 2
+
+  # config for ema
+  ema:
+    decay: 0.99
+    update_interval: 25
+    device: cpu
+
+  clip_grad_norm:
+    target: image_synthesis.engine.clip_grad_norm.ClipGradNorm
+    params:
+      start_iteration: 0
+      end_iteration: 5000
+      max_norm: 0.5
+  optimizers_and_schedulers: # a list of configures, so we can config several optimizers and schedulers
+  - name: none # default is None
+    optimizer:
+      target: torch.optim.AdamW
+      params: 
+        betas: !!python/tuple [0.9, 0.96]
+        weight_decay: 4.5e-3
+            # target: ZeroRedundancyOptimizer
+            # optimizer_class: torch.optim.AdamW
+            # params:
+            # betas: !!python/tuple [0.9, 0.96]
+            # weight_decay: 4.5e-2
+    scheduler:
+      step_iteration: 1
+      target: image_synthesis.engine.lr_scheduler.ReduceLROnPlateauWithWarmup
+      params:
+        factor: 0.5
+        patience: 60000
+        min_lr: 1.0e-6
+        threshold: 1.0e-1
+        threshold_mode: rel
+        warmup_lr: 2.0e-4 # the lr to be touched after warmup
+        warmup: 1000 
+
+dataloader:
+  # data_root: data
+  data_root: /DATA/nakul/sketch/data/
+  batch_size: 13
+  num_workers: 16
+  train_datasets: # a list of configures, so we can combine several schedulers
+    - target: image_synthesis.data.sketch_inpainting_mscoco.COCOSketchInpaintDatasetQ
+      params:
+        data_root: /DATA/nakul/sketch/data/train
+        image_size: [256, 256]
+        sketch_size: [224, 224]
+        sketch_subdir: contours_seg
+        image_subdir: data
+        data_len: -1
+        phase: train
+        path_to_quantized: /DATA/nakul/sketch/SketchInpDiffusion/
+  validation_datasets:
+    - target: image_synthesis.data.sketch_inpainting_mscoco.COCOSketchInpaintDatasetQ
+      params:
+        data_root: /DATA/nakul/sketch/data/validation
+        image_size: [256, 256]
+        sketch_size: [224, 224]
+        sketch_subdir: contours_seg
+        image_subdir: data
+        data_len: -1
+        phase: validation
+        path_to_quantized: /DATA/nakul/sketch/SketchInpDiffusion/
