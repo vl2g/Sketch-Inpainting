@@ -22,7 +22,7 @@ conda activate sketch
 ```
 
 ## Downloading the Data
-Please download the sketches and accompanying data from (here)[] and extract the folder into the repo's root directory. The tokenized images for train and validation splits can be downloaded from (here)[] --- these should also be placed in the root directory (if downloading at other location, please make sure to update the paths in `configs/sketch_coco_inpainting.yaml`).
+Please download the sketches and accompanying data from (here)[https://drive.google.com/file/d/1hRiYg6SxMnBIKJSIga-0TgRcbartbuNf/view?usp=sharing] and extract the folder into the repo's root directory. The tokenized images for train and validation splits can be downloaded from (here)[https://drive.google.com/drive/folders/1UwxWXcN4jV5TgP-WdHbTJy4vPwO_oKhq?usp=sharing] --- these should also be placed in the root directory (if downloading at other location, please make sure to update the paths in `configs/sketch_coco_inpainting.yaml`).
 
 
 After this, please download `train` and `val` splits of the MS-COCO images, extract them and put them under `data/train/images` and `data/validation/images`, respectively.
@@ -62,7 +62,7 @@ CUDA_VISIBLE_DEVICES=0,1 python train.py --config_file configs/sketch_coco_inpai
     --num_node 1
 ```
 
-The pre-trained model can be downloaded from [here]().
+The pre-trained model can be downloaded from [here](https://drive.google.com/file/d/17sG4tje1A1Kx5rWHMzYS0qBtzkQ6bxo1/view?usp=sharing).
 
 ## Launching the Gradio Demo
 After downloading the VQ-VAE as instructed in previous section, please run the following command to launch a Gradio Demo:
