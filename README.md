@@ -1,9 +1,14 @@
 <h1 align="center">
 Sketch-guided Image Inpainting with Partial Discrete Diffusion Process
 </h1>
-<p align="center>
-[![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg)](https://arxiv.org/abs/2404.11949)
-</p>
+
+
+[![arXiv](https://img.shields.io/badge/arXiv-2404.11949-b31b1b.svg)](https://arxiv.org/abs/2404.11949)
+
+
+
+
+
 <hr>
 
 Official Implementation of the Sketch-guided Image Inpainting with Partial Discrete Diffusion Process paper (CVPR-W 2024)
