@@ -12,7 +12,7 @@ model:
       params:
         trainable: False
         token_shape: [32, 32]
-        config_path: 'OUTPUT/pretrained_model/taming_dvae/taming_f8_8192_openimages.yaml'
+        config_path: 'configs/vqvae_openimages.yaml'
         ckpt_path: 'OUTPUT/pretrained_model/taming_dvae/taming_f8_8192_openimages_last.pth'
         num_tokens: 8192
         quantize_number: 2887
@@ -117,28 +117,28 @@ solver:
 
 dataloader:
   # data_root: data
-  data_root: /DATA/nakul/sketch/data/
+  data_root: ./data/
   batch_size: 13
   num_workers: 16
   train_datasets: # a list of configures, so we can combine several schedulers
     - target: image_synthesis.data.sketch_inpainting_mscoco.COCOSketchInpaintDatasetQ
       params:
-        data_root: /DATA/nakul/sketch/data/train
+        data_root: ./data/train
         image_size: [256, 256]
         sketch_size: [224, 224]
-        sketch_subdir: contours_seg
-        image_subdir: data
+        sketch_subdir: contours_seg_resized
+        image_subdir: images
         data_len: -1
         phase: train
-        path_to_quantized: /DATA/nakul/sketch/SketchInpDiffusion/
+        path_to_quantized: ./
   validation_datasets:
     - target: image_synthesis.data.sketch_inpainting_mscoco.COCOSketchInpaintDatasetQ
       params:
-        data_root: /DATA/nakul/sketch/data/validation
+        data_root: ./data/validation
         image_size: [256, 256]
         sketch_size: [224, 224]
-        sketch_subdir: contours_seg
-        image_subdir: data
+        sketch_subdir: contours_seg_resized
+        image_subdir: images
         data_len: -1
         phase: validation
-        path_to_quantized: /DATA/nakul/sketch/SketchInpDiffusion/
+        path_to_quantized: ./

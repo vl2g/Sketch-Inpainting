@@ -221,8 +221,8 @@ class TamingGumbelVQVAE(BaseCodec):
             self, 
             trainable=False,
             token_shape=[32,32],
-            config_path='OUTPUT/pretrained_model/taming_dvae/taming_f8_8192_openimages.yaml',
-            ckpt_path='OUTPUT/pretrained_model/taming_dvae/taming_f8_8192_openimages_last.pth',
+            config_path='configs/vqvae_openimages.yaml',
+            ckpt_path='ckeckpoints/taming_f8_8192_openimages_last.pth',
             num_tokens=8192,
             quantize_number=2887,
             mapping_path='./help_folder/statistics/taming_vqvae_2887.pt',
@@ -313,9 +313,7 @@ class TamingGumbelVQVAE(BaseCodec):
 
 
 class DummyContentCodec(BaseCodec):
-    '''
-    This is just a dummy class, we don't tokenize the sketch. Instead, we let it pass as it is to embedder, ViT
-    '''
+
     def __init__(self, token_shape, **kwargs):
         super().__init__()
         self.num_tokens = token_shape[0] * token_shape[1]

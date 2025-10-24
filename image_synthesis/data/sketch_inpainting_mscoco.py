@@ -260,6 +260,9 @@ class COCOSketchInpaintDatasetQ(data.Dataset):
         pth = os.path.join(self.data_root, self.sketch_subdir, f'{image_name}_{mask_idx}_out.png')
         sketch_img = self.loader(pth)
 
+        if 'contours_seg_resized' in self.sketch_subdir:
+            return sketch_img
+
         sketch_w, sketch_h = sketch_img.size
 
         scale_w, scale_h = self.image_size[1] / im_w, self.image_size[0] / im_h

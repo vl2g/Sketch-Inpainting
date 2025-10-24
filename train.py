@@ -1,10 +1,3 @@
-# ------------------------------------------
-# VQ-Diffusion
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# written By Shuyang Gu
-# ------------------------------------------
-
 import argparse
 import os
 import warnings
@@ -33,7 +26,7 @@ DIST_URL = 'tcp://%s:%s' % (MASTER_ADDR, MASTER_PORT)
 
 def get_args():
     parser = argparse.ArgumentParser(description='PyTorch Training script')
-    parser.add_argument('--config_file', type=str, default='configs/vqvae_celeba_attribute_cond.yaml', 
+    parser.add_argument('--config_file', type=str, default='configs/sketch_inpainting_coco.yaml', 
                         help='path of config file')
     parser.add_argument('--name', type=str, default='', 
                         help='the name of this experiment, if not provided, set to'

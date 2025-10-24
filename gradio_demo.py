@@ -8,18 +8,8 @@ from torchvision import transforms
 from functools import partial
 
 
-SAMPLES_TO_GEN = 5
-
-base_pth = '/DATA/nakul/sketch/SketchInpDiffusion/OUTPUT/sketch_inp_diff'
-config_pth = os.path.join(base_pth, 'configs', 'config.yaml')
-config = load_yaml_config(config_pth)
-print('Loading the model')
-VQ_Diffusion = VQ_Diffusion(config=config_pth, path=os.path.join(base_pth, 'checkpoint', '/DATA/nakul/sketch/SketchInpDiffusion/OUTPUT/sketch_inp_diff/checkpoint/000297e_1343979iter.pth'))
-VQ_Diffusion.model.eval()
-
 def inpaint(image, sketch, truncation_rate):
     model = VQ_Diffusion
-    print('Hereee')
     try:
         image, mask = image['image'], image['mask']
         image = np.transpose(np.array(image.convert('RGB')).astype(np.float32), (2, 0, 1))
@@ -66,7 +56,21 @@ def inpaint(image, sketch, truncation_rate):
         print(e)
         return None
 
-demo = gr.Interface(fn=inpaint, 
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config_path', type=str, default='configs/sketch_coco_inpainting.yaml', help='Path to config')
+    parser.add_argument('--ckpt_path', type=str, default='checkpoints/000297e_1343979iter.pth', help='Path to checkpoint')
+    args = parser.parse_args()
+
+    SAMPLES_TO_GEN = 5
+
+    config = load_yaml_config(args.config_path)
+    print('Loading the model')
+    VQ_Diffusion = VQ_Diffusion(config=args.config_path, path=args.ckpt_path)
+    VQ_Diffusion.model.eval()
+
+    demo = gr.Interface(fn=inpaint, 
              inputs=[
                 gr.Image(type='pil', label='Input Image', tool='sketch'),
                 gr.Image(type='pil', label='Sketch'),
@@ -74,6 +78,4 @@ demo = gr.Interface(fn=inpaint,
              ],
              outputs=[gr.Image(type='pil', shape=(256, 256)) for _ in range(SAMPLES_TO_GEN)])
 
-if __name__ == '__main__':
-
-    demo.launch(debug=True, server_name="10.6.0.40", server_port=8000)
+    demo.launch(debug=True)

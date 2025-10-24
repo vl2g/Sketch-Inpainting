@@ -8,7 +8,7 @@ import tqdm
 if __name__ == '__main__':
     device = 'cuda'
     phase = 'validation'
-    ds = COCOSketchInpaintDataset(data_root='../../fiftyone/coco-2017/', sketch_subdir='contours_seg', phase=phase)
+    ds = COCOSketchInpaintDataset(data_root='../../fiftyone/coco-2017/', sketch_subdir='contours_seg_resized', phase=phase)
     dl = DataLoader(ds, batch_size=32, shuffle=False, num_workers=16, pin_memory=True)
 
     codec = TamingGumbelVQVAE().to(device)
