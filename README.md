@@ -22,7 +22,7 @@ conda activate sketch
 ```
 
 ## Downloading the Data
-Please download the sketches and accompanying data from (here)[https://drive.google.com/file/d/1hRiYg6SxMnBIKJSIga-0TgRcbartbuNf/view?usp=sharing] and extract the folder into the repo's root directory. The tokenized images for train and validation splits can be downloaded from (here)[https://drive.google.com/drive/folders/1UwxWXcN4jV5TgP-WdHbTJy4vPwO_oKhq?usp=sharing] --- these should also be placed in the root directory (if downloading at other location, please make sure to update the paths in `configs/sketch_coco_inpainting.yaml`).
+Please download the sketches and accompanying data from [here](https://drive.google.com/file/d/1hRiYg6SxMnBIKJSIga-0TgRcbartbuNf/view?usp=sharing) and extract the folder into the repo's root directory. The tokenized images for train and validation splits can be downloaded from [here](https://drive.google.com/drive/folders/1UwxWXcN4jV5TgP-WdHbTJy4vPwO_oKhq?usp=sharing) --- these should also be placed in the root directory (if downloading at other location, please make sure to update the paths in `configs/sketch_coco_inpainting.yaml`).
 
 
 After this, please download `train` and `val` splits of the MS-COCO images, extract them and put them under `data/train/images` and `data/validation/images`, respectively.
