@@ -53,7 +53,7 @@ data
 
 ## Training the Model
 
-Begin by downloading the VQ-VAE `openimages-f8-8192` from [here](https://heibox.uni-heidelberg.de/d/2e5662443a6b4307b470/files/?p=%2Fckpts%2Flast.ckpt) and put it under `checkpoints/ckeckpoints/taming_f8_8192_openimages_last.pth`.
+Begin by downloading the VQ-VAE `openimages-f8-8192` from [here](https://heibox.uni-heidelberg.de/d/2e5662443a6b4307b470/files/?p=%2Fckpts%2Flast.ckpt) and put it under `checkpoints/taming_f8_8192_openimages_last.pth`.
 
 To start the training, run:
 ```bash
